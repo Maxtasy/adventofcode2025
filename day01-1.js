@@ -9,7 +9,6 @@ fs.readFile('day01-input.txt', 'utf8', (error, data) => {
 
   const rotations = data.trim().split('\n');
 
-  // Create array of numbers from 0 to 99
   const positions = Array.from({ length: 100 }, (_, i) => ({ position: i, visited: 0 }));
 
   let currentIndex = 50;
