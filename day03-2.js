@@ -1,6 +1,32 @@
 const fs = require('fs');
 
-fs.readFile('day03-input-test.txt', 'utf8', (error, data) => {
+function getMaxJoltage(bank, count) {
+  const result = [];
+  let start = 0;
+
+  while (result.length < count) {
+    const remaining = count - result.length;
+    const end = bank.length - remaining;
+
+    // find max digit from start..end
+    let maxDigit = '-1';
+    let maxIndex = start;
+
+    for (let i = start; i <= end; i++) {
+      if (bank[i] > maxDigit) {
+        maxDigit = bank[i];
+        maxIndex = i;
+      }
+    }
+
+    result.push(maxDigit);
+    start = maxIndex + 1;
+  }
+
+  return parseInt(result.join(''), 10);
+}
+
+fs.readFile('day03-input.txt', 'utf8', (error, data) => {
   if (error) {
     console.error(error);
 
@@ -9,31 +35,9 @@ fs.readFile('day03-input-test.txt', 'utf8', (error, data) => {
 
   const banks = data.trim().split('\n');
 
-  let maximumOutputJoltage = 0;
-
-  banks.forEach((bank) => {
-    let maximumJoltageForBankString = '';
-
-    for (let i = 0; i < 12; i += 1) {
-      let lastHighestNumber = -1;
-      let lastHighestNumberIndex = -1;
-
-      // Find highest number excluding the last 12 - i numbers, starting at the index of the
-      // previous highest number.
-      for (let j = lastHighestNumberIndex + 1; j < bank.length - (12 - i); j += 1) {
-        const number = parseInt(bank[j], 10);
-
-        if (number > lastHighestNumber) {
-          lastHighestNumberIndex = j + 1;
-          lastHighestNumber = number;
-        }
-      }
-
-      maximumJoltageForBankString += `${lastHighestNumber}`;
-    }
-
-    maximumOutputJoltage += parseInt(maximumJoltageForBankString, 10);
-  });
+  const maximumOutputJoltage = banks.reduce((acc, bank) => {
+    return acc + getMaxJoltage(bank, 12);
+  }, 0);
 
   console.log(maximumOutputJoltage);
 });
